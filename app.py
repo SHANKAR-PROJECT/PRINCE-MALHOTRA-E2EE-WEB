@@ -4,7 +4,7 @@ import time
 import platform
 import threading
 from pathlib import Path
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template_string
 from flask_cors import CORS
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -997,6 +997,19 @@ def start_process():
             del active_processes[process_id]
 
 # Flask routes
+@app.route('/', methods=['GET'])
+def home():
+    return render_template_string('''
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FB E2EE by Prince Malhotra</title>
+<style>
+:root{color-scheme:dark;font-family:Inter,system-ui,sans-serif}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at top right,#31276d,#100f1c 45%,#080812);color:#f7f5ff}.shell{max-width:1050px;margin:auto;padding:28px 18px}.hero{padding:28px;border:1px solid #514b7b;border-radius:24px;background:linear-gradient(135deg,#6d5dfc,#3b2677);box-shadow:0 18px 60px #0006}.eyebrow{margin:0 0 10px;color:#d7d0ff;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.75rem}.hero h1{margin:0;font-size:clamp(1.8rem,5vw,3.4rem)}.hero p{color:#ebe8ff;line-height:1.6}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:18px}.card{padding:22px;border:1px solid #302d4c;border-radius:18px;background:#151426e8}.card h2{margin-top:0;font-size:1.05rem}.muted{color:#aaa6c2;font-size:.92rem;line-height:1.55}.button{display:inline-block;border:0;border-radius:12px;padding:12px 18px;background:#fff;color:#231a59;font-weight:800;cursor:pointer;text-decoration:none}.status{display:flex;align-items:center;gap:10px}.dot{width:10px;height:10px;border-radius:50%;background:#49e28a;box-shadow:0 0 14px #49e28a}.footer{text-align:center;color:#8e89a8;margin:25px 0 5px;font-size:.82rem}@media(max-width:480px){.shell{padding:16px 12px}.hero{padding:22px}.card{padding:18px}}
+</style></head>
+<body><main class="shell"><section class="hero"><p class="eyebrow">Secure automation dashboard</p><h1>FB E2EE by Prince Malhotra</h1><p>Manage your encrypted Facebook automation workflow from one simple, responsive web interface.</p><a class="button" href="/health">Check system health</a></section><section class="grid"><article class="card"><h2>System status</h2><div class="status"><span class="dot"></span><strong>Online</strong></div><p class="muted">The backend is ready to receive automation commands.</p></article><article class="card"><h2>Automation</h2><p class="muted">Start the automation process and monitor active sessions through the API.</p><button class="button" id="start">Start automation</button><p class="muted" id="result" aria-live="polite"></p></article><article class="card"><h2>API endpoints</h2><p class="muted"><strong>/health</strong> system health<br><strong>/status</strong> active processes<br><strong>/start</strong> start automation</p></article></section><p class="footer">Built for secure, controlled workflows</p></main><script>document.querySelector('#start').onclick=async()=>{const b=document.querySelector('#start'),r=document.querySelector('#result');b.disabled=true;r.textContent='Starting…';try{const x=await fetch('/start',{method:'POST'});const d=await x.json();r.textContent=d.message||d.status}catch(e){r.textContent='Unable to start automation'}finally{b.disabled=false}}</script></body></html>''')
+
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({
